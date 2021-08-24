@@ -1,0 +1,18 @@
+# Directories
+
+.vs/
+bin/
+bin-int/
+
+# Files
+CMakeLists.txt
+*.user
+
+# xmake
+.xmake/
+build/
+vsxmake2019/
+
+# CLion
+.idea/
+cmake-build-debug/
