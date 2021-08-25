@@ -1,7 +1,8 @@
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 #include <iostream>
-#include "Shader.hpp"
+#include "Renderer/Buffer.hpp"
+#include "Renderer/Shader.hpp"
 
 
 int main() {
@@ -39,10 +40,8 @@ int main() {
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
 
-	uint32_t VBO;
-	glGenBuffers(1, &VBO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	VertexBuffer vertexBuffer(vertices, sizeof(vertices));
+	vertexBuffer.bind();
 
 	uint32_t EBO;
 	glGenBuffers(1, &EBO);

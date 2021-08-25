@@ -1,7 +1,8 @@
 #include "Shader.hpp"
 #include <glad/glad.h>
 #include <vector>
-#include "Utils.hpp"
+#include "../Utils.hpp"
+#include <iostream>
 
 
 Shader::Shader(const std::string &vertexSrcPath, const std::string &fragmentSrcPath)
@@ -9,7 +10,7 @@ Shader::Shader(const std::string &vertexSrcPath, const std::string &fragmentSrcP
 	std::string vertexSource = readShaderFile(vertexSrcPath);
 	std::string fragmentSource = readShaderFile(fragmentSrcPath);
 
-		// Create an empty vertex shader handle
+	// Create an empty vertex shader handle
 	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
 
 	// Send the vertex shader source code to GL
@@ -36,6 +37,7 @@ Shader::Shader(const std::string &vertexSrcPath, const std::string &fragmentSrcP
 		glDeleteShader(vertexShader);
 
 		// Use the infoLog as you see fit.
+		std::cout << infoLog.data() << std::endl;
 
 		// In this simple program, we'll just leave
 		return;
@@ -68,6 +70,7 @@ Shader::Shader(const std::string &vertexSrcPath, const std::string &fragmentSrcP
 		glDeleteShader(vertexShader);
 
 		// Use the infoLog as you see fit.
+		std::cout << infoLog.data() << std::endl;
 
 		// In this simple program, we'll just leave
 		return;
@@ -104,6 +107,7 @@ Shader::Shader(const std::string &vertexSrcPath, const std::string &fragmentSrcP
 		glDeleteShader(fragmentShader);
 
 		// Use the infoLog as you see fit.
+		std::cout << infoLog.data() << std::endl;
 
 		// In this simple program, we'll just leave
 		return;
