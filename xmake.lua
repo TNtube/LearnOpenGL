@@ -13,8 +13,8 @@ local outputdir = "$(mode)-$(os)-$(arch)"
 target("LearnOpenGL")
     set_kind("binary")
 
-    set_targetdir("build/" .. outputdir .. "/Utopia/bin")
-    set_objectdir("build/" .. outputdir .. "/Utopia/obj")
+    set_targetdir("build/" .. outputdir .. "/bin")
+    set_objectdir("build/" .. outputdir .. "/obj")
 
     add_files("src/**.cpp")
     add_headerfiles("src/**.hpp")
