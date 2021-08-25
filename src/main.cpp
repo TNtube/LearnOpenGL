@@ -5,6 +5,32 @@
 #include "Renderer/Shader.hpp"
 
 
+static GLenum ShaderDataTypeToOpenGLType(ShaderDataType type)
+{
+	switch (type)
+	{
+		case ShaderDataType::Float:
+		case ShaderDataType::Float2:
+		case ShaderDataType::Float3:
+		case ShaderDataType::Float4:
+		case ShaderDataType::Mat3:
+		case ShaderDataType::Mat4:
+			return GL_FLOAT;
+		case ShaderDataType::Int:
+		case ShaderDataType::Int2:
+		case ShaderDataType::Int3:
+		case ShaderDataType::Int4:
+			return GL_INT;
+		case ShaderDataType::Bool:
+			return GL_BOOL;
+		default:
+			std::cout << "Unknown ShaderDataType." << std::endl;
+			assert(false);
+			return 0;
+	}
+}
+
+
 int main() {
 	glfwInit();
 	GLFWwindow* window = glfwCreateWindow(1080, 720, "Learn OpenGL", nullptr, nullptr);
@@ -43,17 +69,31 @@ int main() {
 	VertexBuffer vertexBuffer(vertices, sizeof(vertices));
 	vertexBuffer.bind();
 
-	uint32_t EBO;
-	glGenBuffers(1, &EBO);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+	IndexBuffer indexBuffer(indices, sizeof(indices));
+	indexBuffer.bind();
 
 	Shader shader("shaders/VertexShader.glsl", "shaders/FragmentShader.glsl");
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), nullptr);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3* sizeof(float)));
-	glEnableVertexAttribArray(1);
+	vertexBuffer.setLayout({
+		{ShaderDataType::Float3, "aPos"},
+		{ShaderDataType::Float3, "aColor"}
+	});
+
+	vertexBuffer.bind();
+
+	uint32_t index = 0;
+	auto layout = vertexBuffer.getLayout();
+	for (const auto& element : layout)
+	{
+		glEnableVertexAttribArray(index);
+		glVertexAttribPointer(index,
+				      element.getElementCount(),
+				      ShaderDataTypeToOpenGLType(element.type),
+				      element.normalized ? GL_TRUE : GL_FALSE,
+				      layout.getStride(),
+				      reinterpret_cast<const void*>(element.offset));
+		index++;
+	}
 
 
 	while (!glfwWindowShouldClose(window))
