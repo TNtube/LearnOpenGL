@@ -18,6 +18,7 @@ target("LearnOpenGL")
 
     add_files("src/**.cpp")
     add_headerfiles("src/**.hpp")
+    add_headerfiles("src/**.hpp")
 
     add_packages("glfw")
     add_packages("glad")
