@@ -3,32 +3,7 @@
 #include <iostream>
 #include "Renderer/Buffer.hpp"
 #include "Renderer/Shader.hpp"
-
-
-static GLenum ShaderDataTypeToOpenGLType(ShaderDataType type)
-{
-	switch (type)
-	{
-		case ShaderDataType::Float:
-		case ShaderDataType::Float2:
-		case ShaderDataType::Float3:
-		case ShaderDataType::Float4:
-		case ShaderDataType::Mat3:
-		case ShaderDataType::Mat4:
-			return GL_FLOAT;
-		case ShaderDataType::Int:
-		case ShaderDataType::Int2:
-		case ShaderDataType::Int3:
-		case ShaderDataType::Int4:
-			return GL_INT;
-		case ShaderDataType::Bool:
-			return GL_BOOL;
-		default:
-			std::cout << "Unknown ShaderDataType." << std::endl;
-			assert(false);
-			return 0;
-	}
-}
+#include "Renderer/VertexArray.hpp"
 
 
 int main() {
@@ -62,38 +37,22 @@ int main() {
 		0, 1, 2   // first triangle
 	};
 
-	uint32_t VAO;
-	glGenVertexArrays(1, &VAO);
-	glBindVertexArray(VAO);
+	VertexArray vertexArray;
+	vertexArray.bind();
 
-	VertexBuffer vertexBuffer(vertices, sizeof(vertices));
-	vertexBuffer.bind();
 
-	IndexBuffer indexBuffer(indices, sizeof(indices));
-	indexBuffer.bind();
 
 	Shader shader("shaders/VertexShader.glsl", "shaders/FragmentShader.glsl");
 
-	vertexBuffer.setLayout({
+	auto vertexBuffer = std::make_unique<VertexBuffer>(vertices, sizeof(vertices));
+	vertexBuffer->setLayout({
 		{ShaderDataType::Float3, "aPos"},
 		{ShaderDataType::Float3, "aColor"}
 	});
 
-	vertexBuffer.bind();
+	vertexArray.addVertexBuffer(std::move(vertexBuffer));
+	vertexArray.setIndexBuffer(std::make_unique<IndexBuffer>(indices, sizeof(indices)));
 
-	uint32_t index = 0;
-	auto layout = vertexBuffer.getLayout();
-	for (const auto& element : layout)
-	{
-		glEnableVertexAttribArray(index);
-		glVertexAttribPointer(index,
-				      element.getElementCount(),
-				      ShaderDataTypeToOpenGLType(element.type),
-				      element.normalized ? GL_TRUE : GL_FALSE,
-				      layout.getStride(),
-				      reinterpret_cast<const void*>(element.offset));
-		index++;
-	}
 
 
 	while (!glfwWindowShouldClose(window))
@@ -102,7 +61,7 @@ int main() {
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		shader.bind();
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+		glDrawElements(GL_TRIANGLES, vertexArray.getIndexBuffer().getCount(), GL_UNSIGNED_INT, nullptr);
 
 		if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 			glfwSetWindowShouldClose(window, true);
