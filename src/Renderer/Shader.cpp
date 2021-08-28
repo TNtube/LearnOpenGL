@@ -1,7 +1,7 @@
 #include "Shader.hpp"
 #include <glad/glad.h>
 #include <vector>
-#include "../Utils.hpp"
+#include "Utils.hpp"
 #include <iostream>
 
 
