@@ -7,6 +7,7 @@ set_languages("cxx20")
 
 add_requires("glfw 3.3.4")                                                  -- latest version at the time
 add_requires("glad v0.1.34")                                                -- latest version at the time
+add_requires("glm 0.9.9+8")                                                 -- latest version at the time
 
 local outputdir = "$(mode)-$(os)-$(arch)"
 
@@ -23,3 +24,4 @@ target("LearnOpenGL")
 
     add_packages("glfw")
     add_packages("glad")
+    add_packages("glm")
